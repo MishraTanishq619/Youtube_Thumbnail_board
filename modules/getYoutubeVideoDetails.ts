@@ -18,8 +18,18 @@ interface VideoDetailsResponse {
           url: string;
           width: number;
           height: number;
-        };
-      };
+        },
+        high: {
+          url: string;
+          width: number;
+          height: number;
+        },
+        maxres: {
+          url: string;
+          width: number;
+          height: number;
+        }
+      },
       channelTitle: string;
       tags: string[];
     };

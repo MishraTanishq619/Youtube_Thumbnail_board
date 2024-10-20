@@ -7,9 +7,18 @@ if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
 }
 
+// declare global {
+//   var mongoose: {
+//     conn: typeof mongoose | null;
+//     promise: Promise<typeof mongoose> | null;
+//   };
+// }
+
+// @ts-expect-error Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
 let cached = global.mongoose;
 
 if (!cached) {
+  // @ts-expect-error Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
   cached = global.mongoose = { conn: null, promise: null };
 }
 

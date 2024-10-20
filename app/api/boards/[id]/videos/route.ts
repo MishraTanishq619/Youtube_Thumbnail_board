@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectMongo from "@/lib/mongoose";
 import Board from "@/models/Boards";
-import Thumbnail, { IThumbnail } from "@/models/Thumbnail"; // Use Thumbnail model to create new document
+import Thumbnail from "@/models/Thumbnail"; // Use Thumbnail model to create new document
 import { extractVideoId } from "@/modules/extractVideoId";
 import { getYoutubeVideoDetails } from "@/modules/getYoutubeVideoDetails";
 
@@ -46,8 +46,8 @@ export async function POST(
         const thumbnails = videoData.snippet.thumbnails;
         const thumbnailKeys = Object.keys(thumbnails);
         const lastThumbnailKey = thumbnailKeys[thumbnailKeys.length - 1];
-		// @ts-ignore
-        const lastThumbnailUrl = thumbnails[lastThumbnailKey].url;
+        // @ts-expect-error: Index signature for type 'string' not found
+        const lastThumbnailUrl = thumbnails[lastThumbnailKey].url; // No index signature with a parameter of type 'string' was found
 
         // Create a new Thumbnail instance
         const newThumbnail = new Thumbnail({
@@ -66,8 +66,19 @@ export async function POST(
 
         return NextResponse.json(updatedBoard, { status: 201 });
 
-    } catch (error: any) {
-        console.error("Error:", error);
-        return NextResponse.json({ message: error.message }, { status: 500 });
-    }
+    } catch (error) {
+		if (error instanceof Error) {
+			// Handling the error and returning a proper response
+			return NextResponse.json(
+				{ success: false, message: error.message },
+				{ status: 500 }
+			);
+		} else {
+			// Handling unknown error types
+			return NextResponse.json(
+				{ success: false, message: "An unknown error occurred" },
+				{ status: 500 }
+			);
+		}
+	}
 }

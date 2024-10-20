@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Youtube, ArrowRight } from 'lucide-react'
 
 export default function LandingPage() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function LandingPage() {
           Welcome to YouTuber Thumbnail Board
         </h1>
         <p className="text-xl mb-8 text-center max-w-2xl mx-auto leading-relaxed">
-          Elevate your YouTube game with our powerful thumbnail management tool. Organize, analyze, and optimize your video thumbnails to boost your channel's performance.
+          Elevate your YouTube game with our powerful thumbnail management tool. Organize, analyze, and optimize your video thumbnails to boost your channel&apos;s performance.
         </p>
         <div className="space-y-4 sm:space-y-0 sm:space-x-4">
           <Button 

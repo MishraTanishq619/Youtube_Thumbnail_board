@@ -1,28 +1,26 @@
 'use client'
 
 import React, { useState, useEffect } from "react"
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Eye, ThumbsUp, Plus, Sun, Moon, Search, Trash2, LogOut } from "lucide-react"
+import { Eye, ThumbsUp, Plus, Sun, Moon, Trash2, LogOut } from "lucide-react"
 import { useTheme } from "@/contexts/ThemeContext"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { signOut } from "next-auth/react"
-import { getYoutubeVideoDetails } from "@/modules/getYoutubeVideoDetails"
 import axios from "axios"
 
 // Types
 type Video = {
-  id: number
+  _id: string
   title: string
   thumbnail: string
   views: number
@@ -30,21 +28,22 @@ type Video = {
 }
 
 type Board = {
-  id: number
+  _id: string
   name: string
   videos: Video[]
+  user: string
 }
 
 // Default thumbnail image
-const DEFAULT_THUMBNAIL = "/placeholder.svg?height=200&width=300"
+// const DEFAULT_THUMBNAIL = "/placeholder.svg?height=200&width=300"
 
 // BoardsList component
 const BoardsList: React.FC<{
   boards: Board[]
   activeBoard: Board | null
-  onSelectBoard: (boardId: number) => void
+  onSelectBoard: (boardId: string) => void
   onCreateBoard: () => void
-  onDeleteBoard: (boardId: number) => void
+  onDeleteBoard: (boardId: string) => void
 }> = ({ boards, activeBoard, onSelectBoard, onCreateBoard, onDeleteBoard }) => {
   return (
     <div className="w-64 bg-gray-100 p-4 h-screen dark:bg-gray-800">
@@ -187,13 +186,14 @@ export default function ThumbnailBoard() {
       setActiveBoard(response.data)
       setNewVideoUrl("")
     } catch (error) {
+      console.log(error)
       setError("Failed to add video. Please try again.")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleSelectBoard = (boardId: number) => {
+  const handleSelectBoard = (boardId: string) => {
     const selected = boards.find((board) => board._id === boardId)
     if (selected) {
       setActiveBoard(selected)
@@ -227,7 +227,7 @@ export default function ThumbnailBoard() {
 
   const handleDeleteBoard = async (boardId: string) => {
 
-    const response = await axios.delete("/api/boards", {
+    await axios.delete("/api/boards", {
       data : { boardId }
     });
 
@@ -238,7 +238,7 @@ export default function ThumbnailBoard() {
     }
   }
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination || !activeBoard) return
 
     const newVideos = Array.from(activeBoard.videos)
@@ -328,7 +328,7 @@ export default function ThumbnailBoard() {
           </>
         ) : (
           <div className="text-center">
-            <p className="text-xl mb-4">You don't have any boards yet. Create one to get started!</p>
+            <p className="text-xl mb-4">You don&apos;t have any boards yet. Create one to get started!</p>
             <Button onClick={handleCreateBoard}>
               <Plus className="w-4 h-4 mr-2" />
               Create Your First Board
